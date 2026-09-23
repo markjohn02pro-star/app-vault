@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Generate PWA Icons</title>
+</head>
+<body>
+    <h2>PWA Icon Generator</h2>
+    <p>Click the buttons below to download the PNG icons needed for the PWA manifest.</p>
+    <canvas id="canvas" style="display:none;"></canvas>
+    <div id="buttons"></div>
+
+    <script>
+        const sizes = [
+            { name: 'icon-192.png', size: 192 },
+            { name: 'icon-512.png', size: 512 },
+            { name: 'icon-maskable-192.png', size: 192, maskable: true },
+            { name: 'icon-maskable-512.png', size: 512, maskable: true },
+        ];
+
+        function drawIcon(ctx, size, maskable) {
+            const bg = '#166534';
+            const fg = '#ffffff';
+
+            // Background
+            ctx.fillStyle = bg;
+            ctx.fillRect(0, 0, size, size);
+
+            const scale = size / 512;
+            ctx.save();
+            ctx.translate(size / 2, size * 0.47);
+            ctx.scale(scale, scale);
+
+            // Lock body
+            ctx.strokeStyle = fg;
+            ctx.lineWidth = 16;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            roundRect(ctx, -80, -10, 160, 120, 12);
+            ctx.stroke();
+
+            // Lock shackle
+            ctx.beginPath();
+            ctx.moveTo(-50, -10);
+            ctx.lineTo(-50, -60);
+            ctx.quadraticCurveTo(-50, -110, 0, -110);
+            ctx.quadraticCurveTo(50, -110, 50, -60);
+            ctx.lineTo(50, -10);
+            ctx.stroke();
+
+            // Keyhole circle
+            ctx.fillStyle = fg;
+            ctx.beginPath();
+            ctx.arc(0, 45, 16, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Keyhole rectangle
+            roundRect(ctx, -6, 50, 12, 30, 4);
+            ctx.fill();
+
+            ctx.restore();
+
+            // Maskable: add extra padding ring (safe zone indicator)
+            if (maskable) {
+                // Maskable icons need the important content within 80% safe area
+                // The icon we drew is already well-centered, so it's fine
+            }
+        }
+
+        function roundRect(ctx, x, y, w, h, r) {
+            ctx.beginPath();
+            ctx.moveTo(x + r, y);
+            ctx.lineTo(x + w - r, y);
+            ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+            ctx.lineTo(x + w, y + h - r);
+            ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+            ctx.lineTo(x + r, y + h);
+            ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+            ctx.lineTo(x, y + r);
+            ctx.quadraticCurveTo(x, y, x + r, y);
+            ctx.closePath();
+        }
+
+        function generateAndDownload(name, size, maskable) {
+            const canvas = document.getElementById('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            drawIcon(ctx, size, maskable);
+
+            canvas.toBlob((blob) => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = name;
+                a.click();
+                URL.revokeObjectURL(url);
+            }, 'image/png');
+        }
+
+        // Create buttons
+        const container = document.getElementById('buttons');
+        sizes.forEach(({ name, size, maskable }) => {
+            const btn = document.createElement('button');
+            btn.textContent = `Download ${name} (${size}×${size})`;
+            btn.style.cssText = 'display:block; margin:8px 0; padding:8px 16px; cursor:pointer;';
+            btn.addEventListener('click', () => generateAndDownload(name, size, maskable));
+            container.appendChild(btn);
+        });
+
+        // Auto-generate all on load
+        const autoBtn = document.createElement('button');
+        autoBtn.textContent = '⬇ Download ALL icons';
+        autoBtn.style.cssText = 'display:block; margin:16px 0; padding:12px 24px; cursor:pointer; font-weight:bold; background:#166534; color:white; border:none; border-radius:4px;';
+        autoBtn.addEventListener('click', () => {
+            sizes.forEach(({ name, size, maskable }, i) => {
+                setTimeout(() => generateAndDownload(name, size, maskable), i * 500);
+            });
+        });
+        container.prepend(autoBtn);
+    </script>
+</body>
+</html>

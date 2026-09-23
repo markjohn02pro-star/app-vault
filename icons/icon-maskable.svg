@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Maskable icon: important content within 80% safe zone (inner 410x410 area) -->
+  <rect width="512" height="512" fill="#166534"/>
+  <g transform="translate(256, 240)">
+    <!-- Lock body -->
+    <rect x="-70" y="-5" width="140" height="105" rx="10" fill="none" stroke="#ffffff" stroke-width="14"/>
+    <!-- Lock shackle -->
+    <path d="M-44,-5 L-44,-52 Q-44,-96 0,-96 Q44,-96 44,-52 L44,-5" fill="none" stroke="#ffffff" stroke-width="14" stroke-linecap="round"/>
+    <!-- Keyhole -->
+    <circle cx="0" cy="40" r="14" fill="#ffffff"/>
+    <rect x="-5" y="44" width="10" height="26" rx="3" fill="#ffffff"/>
+  </g>
+</svg>
